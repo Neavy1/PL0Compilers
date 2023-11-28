@@ -1,0 +1,104 @@
+//Gramatica correcta de PL0, sacada de libro.
+
+program ::= block "." | funclist;
+
+block ::= ["const" ident "=" number {"," ident "=" number} ";"]
+        ["var" ident {"," ident} ";"]
+        {"procedure" ident 2;" block ";"} statement;
+
+statement ::= [ ident ":=" expression | "call" ident
+              | "?" ident | "!" expression
+              | "begin" statement {";" statement} "end"
+              | "if" condition "then" statement
+              | "while" condition "do" statement];
+
+funclist ::= function { function }
+
+function ::= 'FUN' 'ID' parmlist varlist 'BEGIN' stmtlist 'END'
+
+parmlist ::= '(' [ parmlistitems ] ')'
+
+parmlistitems ::= parm { ',' parm }
+
+parm ::= 'ID' ':' typename
+
+typename ::= ( 'INT' | 'FLOAT' ) [ '[' expr ']' ]
+
+varlist ::= [ decllist optsemi ]
+
+decllist ::= vardecl { ';' vardecl }
+
+vardecl ::= parm | function
+
+stmtlist ::= stmt { ';' stmt }
+
+location ::= 'ID' 
+    | 'ID' '[' expr ']'
+
+exprlist ::= [ exprlistitems ]
+
+exprlistitems ::= expr [ ',' expr ]
+
+condition ::= "odd" expression
+            | expression ("="|"#"|"<"|"<="|">"|">=") expression;
+
+assigment ::= ident ':=' expression;
+
+ident ::= STRING
+
+term ::= RNUM
+| INUM
+| STRING
+| BOOL
+| var
+| method_call
+
+method_call ::= var "." method_name "(" arg_list ")"
+
+argument_list ::= arg | arg "," arg_list
+
+argument ::= expression
+
+expression ::= expr := expr '+' exprB
+           | expr '-' expr
+           | expr '*' expr
+           | expr '/' expr
+           | '-' expr
+           | '+' expr
+           | '(' expr ')'
+           | 'RNUM'
+           | 'INUM'
+           | 'ID'
+           | 'ID' '[' expr ']'
+           | 'ID' '(' exprlist ')'
+           | 'RNUM' '(' expr ')'
+           | 'INUM' '(' expr ')'
+
+term ::= factor {("*"|"/") factor};
+
+factor ::= ident | number | "(" expression ")";
+
+while ::= WHILE condition DO statement;
+
+number ::= RNUM | INUM;
+
+RNUM ::= (0|[1-9]\d*)'
+
+INUM ::= \d+\.\d+([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?|\d+[eE][+-]?\d+;
+
+STRING ::= "([^"\\]|\\.)*"
+
+BOOL ::= "true" | "false"
+
+
+relop ::= expr 'LT' expr
+        | expr 'LE' expr
+        | expr 'GT' expr
+        | expr 'GE' expr
+        | expr 'EQ' expr
+        | expr 'NE' expr
+        | relop 'AND' relop
+        | relop 'OR' relop
+        | 'NOT' relop
+
+PRINT ::= "print" expression
